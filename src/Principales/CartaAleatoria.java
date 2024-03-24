@@ -26,6 +26,14 @@ public class CartaAleatoria {
 		return valorAleatorio();
 	}
 
+	/**
+	 * Constructor de la clase CartaAleatoria.
+	 * Inicializa una instancia de la clase Random para generar números aleatorios.
+	 */
+	public CartaAleatoria() {
+		random = new Random();
+	}
+	
     /**
      * Obtiene aleatoriamente el símbolo de una carta.
      * 

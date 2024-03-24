@@ -17,8 +17,8 @@ package Principales;
 public class Partida {
 
 	/**
-	 * Añade una nueva carta al arrayList del jugador y permite
-	 * al Dealer coger cartas para hacer al juego mas dinamico.
+	 * Añade una nueva carta al arrayList del jugador y permite al Dealer coger
+	 * cartas para hacer al juego mas dinamico.
 	 * 
 	 * @param jugador El jugador al cual se le añade una nueva carta.
 	 * @param dealer  El dealer de la partida, quien puede coger cartas bajo ciertas
@@ -225,14 +225,16 @@ public class Partida {
 	}
 
 	/**
-	 * @deprecated En un futuro se creara una nueva clase que maneje mejor la puntuacion de los ases.
-	 *             Use la nueva clase cuando esté disponible.
+	 * @deprecated En un futuro se creara una nueva clase que maneje mejor la
+	 *             puntuacion de los ases. Use la nueva clase cuando esté
+	 *             disponible.
 	 * 
-	 * Ajusta el valor del AS en la mano del jugador, dependiendo de su
-	 * puntuacion actual.
+	 *             Ajusta el valor del AS en la mano del jugador, dependiendo de su
+	 *             puntuacion actual.
 	 * 
 	 * @param ambosJugadores El jugador que tenga los ases
-	 * @deprecated Este método será eliminado en futuras versiones. Utilice la nueva clase de gestión de puntuación de ases.
+	 * @deprecated Este método será eliminado en futuras versiones. Utilice la nueva
+	 *             clase de gestión de puntuación de ases.
 	 */
 	@Deprecated
 	public static void cambiarValorAs(Jugador ambosJugadores) {
