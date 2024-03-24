@@ -3,10 +3,13 @@ package Principales;
 import java.util.Random;
 
 /**
- * La funcion de esta clase es crear de manera aleatoria cartas con los siguientes parametros
+ * La unica funcion de esta clase es pasar parametros de manera aleatoria para
+ * la creacion de las cartas, el valor y su simbolo, ejemplo: J y Diamantes
  * 
- * @author Alex
- * @version JavaSE-17
+ * 
+ * @version 1.0.0
+ * @since 1.0
+ * @author Alejandro Strohush Loyish
  */
 
 public class CartaAleatoria {
@@ -14,27 +17,33 @@ public class CartaAleatoria {
 	private String[] simbolo = { "Treboles", "Corazones", "Diamantes", "Picas" };
 	private Random random;
 
-	public CartaAleatoria() {
-		random = new Random();
-	}
-
+    /**
+     * Obtiene aleatoriamente el valor de una carta.
+     * 
+     * @return Valor de la carta aleatorio.
+     */
 	public String obtenerValorAleatoria() {
 		return valorAleatorio();
 	}
 
+    /**
+     * Obtiene aleatoriamente el símbolo de una carta.
+     * 
+     * @return Símbolo de la carta aleatoria.
+     */
 	public String obtenerSimboloAleatoria() {
 		return simboloAleatorio();
 	}
 
-	// Este metodo es para conseguir aleatoriamente el valor osea -
-	// 2,3,4,5,6,7,8,9,10,J,Q,K,AS
+	// Este metodo es para conseguir aleatoriamente el valor -
+	// 2,3,4,5,6,7,8,9,10,J,Q,K o AS
 	private String valorAleatorio() {
 		int indice = random.nextInt(valor.length);
 		return valor[indice];
 	}
 
-	// Este metodo es para conseguir aleatoriamente el simbolo osea - Corazon,
-	// picas, diamantes o treboles
+	// Este metodo es para conseguir aleatoriamente el simbolo - Corazon, picas,
+	// diamantes o treboles
 	private String simboloAleatorio() {
 		int indice = random.nextInt(simbolo.length);
 		return simbolo[indice];

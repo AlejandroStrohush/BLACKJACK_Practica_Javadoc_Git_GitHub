@@ -3,13 +3,21 @@ package Principales;
 import java.util.ArrayList;
 
 /**
- * Esta clase inicia la partida y da las cartas iniciales a cada jugador
- * @author Alex
- * @version JavaSE-17
+ * Esta clase inicia la partida, da las cartas iniciales a cada jugador y la resolucion final de la partida
+ * 
+ * @version 1.0.0
+ * @since 1.0
+ * @author Alejandro Strohush Loyish
  */
 
 public class Main {
 
+    /**
+     * Método principal que inicia la partida.
+     * 
+     * @param args Los argumentos de la línea de comandos (no utilizados en este caso)
+     */
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -20,13 +28,13 @@ public class Main {
 		CartaAleatoria generador = new CartaAleatoria();
 
 		int dinero = 700;
-		int dineroCPU = 1000;
-		int victoria = dinero + dineroCPU;
+		int dineroDealer = 1000;
+		int victoria = dinero + dineroDealer;
 
 		// Creo a los jugadores y les asigno un dinero base para que puedan apostar
 		Jugador jugador = new Jugador(dinero);
 
-		JugadorCPU jugadorCPU = new JugadorCPU(dineroCPU);
+		Jugador dealer = new Jugador(dineroDealer);
 
 		do {
 
@@ -34,32 +42,25 @@ public class Main {
 			// partida
 			if (!(jugador.getDinero() <= 0 || jugador.getDinero() >= victoria)) {
 
-				// Borra las cartas de los jugadores para empezar una nueva partida
+				// Borra las cartas de los jugadores para empezar una nueva ronda
 				jugador.getListaCartas().clear();
 
-				jugadorCPU.getListaCartas().clear();
+				dealer.getListaCartas().clear();
 
-				// Da las cartas iniciales a cada jugador, la carta se crea con la clase Carta y
-				// recibe de parametros la clase CartaAleatoria su unica función es pasar
-				// parametros aleatorios para la creacion de las cartas
+				// Da las cartas iniciales a cada jugador
 				for (int i = 0; i < 2; i++) {
-					jugador.añadirCarta(
-							new Carta(generador.obtenerValorAleatoria(), generador.obtenerSimboloAleatoria()));
-					jugadorCPU.añadirCarta(
-							new Carta(generador.obtenerValorAleatoria(), generador.obtenerSimboloAleatoria()));
-				}
 
-				// Le asigna la puntuacion a la carta de cada jugador, sirve para cartas como
-				// J,Q,K,AS que estan en formato String y queremos tranformar la puntuacion en
-				// int
-				Partida.puntuacion(jugador, jugadorCPU);
+					Partida.addCartaJugador(jugador);
+					Partida.addCartaJugador(dealer);
+
+				}
 
 				// Te dice en que ronda de la partida estas
 				contadorRondas++;
 
-				System.out.println("Empiza la Ronda: " + contadorRondas);
+				System.out.println("Empieza la Ronda: " + contadorRondas);
 
-				Menu.menu(jugador, jugadorCPU);
+				Menu.menu(jugador, dealer);
 
 			}
 

@@ -1,41 +1,55 @@
 package Principales;
 
+import java.util.Random;
 import java.util.Scanner;
 
 /**
- * Esta clase es para que el jugador pueda elegir que quiere hacer en la partida con un menu interactivo
- * @author Alex
- * @version JavaSE-17
+ * Esta clase es para que el jugador pueda elegir que quiere hacer en la partida
+ * con un menu interactivo
+ * 
+ * @version 1.0.0
+ * @since 1.0
+ * @author Alejandro Strohush Loyish
  */
 
 public class Menu {
-
-	public static void menu(Jugador jugador, JugadorCPU jugadorCPU) {
+	
+	/**
+	 * Método que muestra un menú interactivo para que el jugador pueda tomar decisiones durante la partida.
+	 * 
+	 * @param jugador El jugador que participa en la partida.
+	 * @param dealer El dealer con el que compite el jugador.
+	 */
+	
+	public static void menu(Jugador jugador, Jugador dealer) {
 
 		Scanner entradaUsuario = new Scanner(System.in);
 
+		Random aleatorio = new Random();
+
 		int opcion = 0;
 		int cantidadApostada = 0;
+		int probabilidad = aleatorio.nextInt(2);
 
 		do {
 
 			// Siempre que empiece una ronda, el jugador podra elegir la cantidad que quiere
 			// apostar
 			System.out.println("Cuanto quieres apostar? (Tienes en total " + jugador.getDinero() + "€)"
-					+ " (El Dealer tiene " + jugadorCPU.getDinero() + "€)");
+					+ " (El Dealer tiene " + dealer.getDinero() + "€)");
 
 			do {
 
 				cantidadApostada = entradaUsuario.nextInt();
 
-				if (cantidadApostada > jugador.getDinero() || cantidadApostada > jugadorCPU.getDinero()) {
+				if (cantidadApostada > jugador.getDinero() || cantidadApostada > dealer.getDinero()) {
 
 					System.err.println(
 							"No puedes apostar una cantidad mayor a la que tienes o una superior a la del Dealer");
 
 				}
 
-			} while (cantidadApostada > jugador.getDinero() || cantidadApostada > jugadorCPU.getDinero());
+			} while (cantidadApostada > jugador.getDinero() || cantidadApostada > dealer.getDinero());
 
 			jugador.setCantidadApostada(cantidadApostada);
 
@@ -57,15 +71,23 @@ public class Menu {
 				case 1:
 					// Esta opcion enseña al jugador que cartas tiene
 					System.out.println(jugador.getListaCartas());
+
+					// Hay una probabilidad del 50% de que si tu miras tu carta le das la posiblidad
+					// de que el Dealer coja una si quiere
+					probabilidad = aleatorio.nextInt(2);
+					if (probabilidad == 1) {
+
+						Partida.dealerCogeCarta(dealer);
+
+					}
+
 					break;
 
 				case 2:
 
-					// Le dara al jugador una carta mas y ademas se le va a atribuir que valor tiene
-					// si 5, 10 u 11 o el que sea, se hace principalmente por las de tipo (J,Q,K,AS)
+					// Le da al jugador una carta mas
 					if (jugador.getListaCartas().size() != 5) {
-						Partida.pedirCarta(jugador, jugadorCPU);
-						Partida.puntuacion(jugador, jugadorCPU);
+						Partida.pedirCarta(jugador, dealer);
 					} else {
 						System.out.println("Maximo puedes tener 5 cartas");
 					}
@@ -74,7 +96,7 @@ public class Menu {
 
 				case 3:
 					// Este metodo hara el resolucion de la ronda, indicara el ganador de la ronda
-					Partida.stand(jugador, jugadorCPU);
+					Partida.stand(jugador, dealer);
 
 					break;
 
@@ -83,28 +105,25 @@ public class Menu {
 					// resolucionara la partida, indicando el ganador de la misma
 					System.out.println("Has duplicado tu apuesta!!");
 					cantidadApostada = cantidadApostada * 2;
-
+					jugador.setCantidadApostada(cantidadApostada);
 					if (jugador.getListaCartas().size() != 5) {
-						Partida.pedirCarta(jugador, jugadorCPU);
-						Partida.puntuacion(jugador, jugadorCPU);
+						Partida.pedirCarta(jugador, dealer);
 					} else {
 						System.out.println("Como ya tenias 5, no recibes una nueva");
 					}
 
-					Partida.stand(jugador, jugadorCPU);
+					Partida.stand(jugador, dealer);
 
 					break;
 
 				// Explica las reglas del juego
 				case 5:
 
-					System.out.println(
-							"El objetivo es obtener una mano con un valor cercano a 21 sin pasarse pero tener mas puntos que el Dealer\r\n"
+					System.err.println(
+							"El objetivo es obtener una mano con un valor cercano a 21 sin pasarse pero tener mas puntos que el Dealer,\nsi alguien se pasa el otro gana\r\n"
 									+ "Las cartas numéricas valen su número, las figuras valen 10 y el As puede valer 1 u 11.\r\n"
 									+ "Los jugadores deciden pedir cartas adicionales (\"hit\") para acercarse a 21 o quedarse con su mano actual (\"stand\").\r\n"
-									+ "El dealer se detiene cuando tiene al menos 17 puntos.\r\n"
-									+ "Un \"blackjack\" es una mano inicial con un As y una carta de valor 10, que gana automáticamente a menos que el dealer también tenga blackjack.\r\n"
-									+ "Si el dealer se pasa de 21, los jugadores que no se pasaron ganan automáticamente.");
+									+ "Un \"blackjack\" es una mano que su suma da 21 exactos, ganas automáticamente, a menos que el dealer también tenga blackjack.\r\n");
 
 					break;
 

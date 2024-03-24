@@ -1,105 +1,98 @@
 package Principales;
 
 /**
- * Esta clase manipula la puntuacion de la partida, el resultado de la partida,
- * que cartas va a recibir cada jugador y que valor tiene cada carta
+ * Clase que gestiona la logica de una partida, incluyendo la manipulacion de la
+ * puntuacion, el resultado de las rondas, la distribucion y valoracion de las
+ * cartas entre los jugadores.
  * 
- * @author Alex
- * @version JavaSE-17
+ * Utiliza {@link Jugador} para manejar las acciones y estados tanto del jugador
+ * como del dealer.
+ *
+ * 
+ * @version 1.0.0
+ * @since 1.0
+ * @author Alejandro Strohush Loyish
  */
 
 public class Partida {
 
-	// En el menu interactivo activa este metodo, lo cual hace que añade una nueva
-	// carta al arrayList del jugador
-	// ademas se añade al Dealer para que tenga la capacidad de coger cartas si
-	// quiere, para hacer al juego mas dinamico
-	public static void pedirCarta(Jugador jugador, JugadorCPU jugadorCPU) {
-
-		int puntosCPU = 0;
-		int contador = 0;
-		CartaAleatoria generador = new CartaAleatoria();
+	/**
+	 * Añade una nueva carta al arrayList del jugador y permite
+	 * al Dealer coger cartas para hacer al juego mas dinamico.
+	 * 
+	 * @param jugador El jugador al cual se le añade una nueva carta.
+	 * @param dealer  El dealer de la partida, quien puede coger cartas bajo ciertas
+	 *                condiciones.
+	 */
+	public static void pedirCarta(Jugador jugador, Jugador dealer) {
 
 		System.out.println("Has recibido una carta");
 
 		// Le da una nueva carta al jugador
-		jugador.añadirCarta(new Carta(generador.obtenerValorAleatoria(), generador.obtenerSimboloAleatoria()));
+		addCartaJugador(jugador);
 
-		// Hace recuento de los puntos del Dealer
-		for (Carta carta : jugadorCPU.getListaCartas()) {
-
-			puntosCPU += jugadorCPU.getListaCartas().get(contador).getPuntos();
-			contador++;
-		}
+		calcularPuntos(dealer);
 
 		// Si tiene menos de 17 puntos el Dealer cogera otra carta con este metodo
-		dealerCogeCarta(jugadorCPU);
+		dealerCogeCarta(dealer);
 
 	}
 
-	// Este metodo es la resolucion de la partida, dira que jugador ha ganado, se
-	// pasa de parametro a ambos jugadores porque en sus atributos esta almacenado
-	// las cartas con su respectiva puntuacion
-	public static void stand(Jugador jugador, JugadorCPU jugadorCPU) {
+	/**
+	 * Dice el resultado de la partida en base a la puntuacion de cada jugador
+	 * 
+	 * 
+	 * @param jugador El jugador humano.
+	 * @param dealer  El dealer de la partida.
+	 */
+	public static void stand(Jugador jugador, Jugador dealer) {
 
-		int puntos = 0;
-		int puntosCPU = 0;
-		int contador = 0;
-		int contadorCPU = 0;
+		if (jugador.getAs() == true) {
 
-		// Calcula cuantos puntos tiene el jugador en base al valor de cada carta
-		for (Carta carta : jugador.getListaCartas()) {
+			cambiarValorAs(jugador);
 
-			puntos += jugador.getListaCartas().get(contador).getPuntos();
-			contador++;
 		}
 
-		jugador.setPuntos(puntos);
+		if (dealer.getAs() == true) {
 
-		// Calcula cuantos puntos tiene el Dealer en base al valor de cada carta
-		for (Carta carta : jugadorCPU.getListaCartas()) {
+			cambiarValorAs(dealer);
 
-			puntosCPU += jugadorCPU.getListaCartas().get(contadorCPU).getPuntos();
-			contadorCPU++;
 		}
+		calcularPuntos(jugador);
+		calcularPuntos(dealer);
 
-		jugadorCPU.setPuntos(puntosCPU);
-
-		// Los puntos se comparan en los proximos if y dependiendo de la condicion dara
-		// que ha ganado un jugador u otro, aparte de ingresar el dinero al ganador y
-		// restarselo al perdedor
-		if (jugador.getPuntos() == 21 && jugadorCPU.getPuntos() == 21) {
+		if (jugador.getPuntos() == 21 && dealer.getPuntos() == 21) {
 			System.out.println("Ambos tienen BlackJack!!! EMPATE");
 		} else {
 			if (jugador.getPuntos() == 21) {
 				System.out.println("Has ganado teniendo un BlackJack!!");
-				victoria(jugador, jugadorCPU);
+				victoria(jugador, dealer);
 			} else {
-				if (jugadorCPU.getPuntos() == 21) {
-					System.out.println("Has perdido! El Dealer tenía un BlackJack!!!");
+				if (dealer.getPuntos() == 21) {
+					System.out.println("Has perdido! El Dealer tenia un BlackJack!!!");
 					System.out.println("Dealer: recuerda que la casa siempre gana jajajajaja");
-					derrota(jugador, jugadorCPU);
+					derrota(jugador, dealer);
 				} else {
-					if (jugador.getPuntos() >= 22 && jugadorCPU.getPuntos() >= 22) {
+					if (jugador.getPuntos() >= 22 && dealer.getPuntos() >= 22) {
 						System.out.println("Ambos se han pasado de 21 puntos, empate");
 					} else {
 						if (jugador.getPuntos() >= 22) {
 							System.out.println("Has perdido, te has pasado de 21 puntos...");
-							derrota(jugador, jugadorCPU);
+							derrota(jugador, dealer);
 						} else {
-							if (jugadorCPU.getPuntos() >= 22) {
+							if (dealer.getPuntos() >= 22) {
 								System.out.println("El dealer se ha pasado de 21 puntos, has GANADO!!!");
-								victoria(jugador, jugadorCPU);
+								victoria(jugador, dealer);
 							} else {
-								if (jugador.getPuntos() == jugadorCPU.getPuntos()) {
+								if (jugador.getPuntos() == dealer.getPuntos()) {
 									System.out.println("Habeis empatado en puntos");
 								} else {
-									if (jugador.getPuntos() > jugadorCPU.getPuntos()) {
-										System.out.println("Tienes más puntos que el Dealer! Has GANADO!");
-										victoria(jugador, jugadorCPU);
+									if (jugador.getPuntos() > dealer.getPuntos()) {
+										System.out.println("Tienes mas puntos que el Dealer! Has GANADO!");
+										victoria(jugador, dealer);
 									} else {
 										System.out.println("Tienes menos puntos que el Dealer! Has PERDIDO!");
-										derrota(jugador, jugadorCPU);
+										derrota(jugador, dealer);
 									}
 								}
 							}
@@ -110,166 +103,175 @@ public class Partida {
 		}
 
 		System.out.println("Tus cartas: " + jugador.getListaCartas() + " puntos: " + jugador.getPuntos());
-		System.out.println(
-				"Las cartas del Dealer: " + jugadorCPU.getListaCartas() + " puntos: " + jugadorCPU.getPuntos());
+		System.out.println("Las cartas del Dealer: " + dealer.getListaCartas() + " puntos: " + dealer.getPuntos());
 
 	}
 
-	// Este metodo le da a cada carta su valor, Si tienes una J esta valdra 10 y asi
-	// con el resto de cartas, se pasa de parametros ambos jugadores porque tienen
-	// almacenadas las cartas con los atributos de los valores
-	public static void puntuacion(Jugador jugador, JugadorCPU jugadorCPU) {
+	/**
+	 * Asigna puntaje a la carta dada, considerando valores especiales para figuras
+	 * y ases.
+	 * 
+	 * @param carta          La carta a la cual asignar un valor de puntos.
+	 * @param ambosJugadores El jugador que recibe la carta, utilizado para
+	 *                       gestionar el caso de los ases.
+	 */
+	public static void puntuacion(Carta carta, Jugador ambosJugadores) {
 
-		int posicionCarta = 0;
-		int posicionCartaCPU = 0;
+		if (carta.getValores().matches(".*[2-9].*")) {
 
-		for (Carta carta : jugador.getListaCartas()) {
+			int puntos = Integer.parseInt(carta.getValores());
 
-			if (jugador.getListaCartas().get(posicionCarta).getValores().matches(".*[2-9].*")) {
+			carta.setPuntos(puntos);
 
-				int puntos = Integer.parseInt(jugador.getListaCartas().get(posicionCarta).getValores());
+		} else {
 
-				jugador.getListaCartas().get(posicionCarta).setPuntos(puntos);
-
-			} else {
-
-				switch (jugador.getListaCartas().get(posicionCarta).getValores()) {
-
-				case "10":
-				case "J":
-				case "Q":
-				case "K":
-
-					jugador.getListaCartas().get(posicionCarta).setPuntos(10);
-
-					break;
-
-				case "AS":
-
-					int puntosAS = 0;
-					int contadorAS = 0;
-
-					for (Carta carta2 : jugador.getListaCartas()) {
-						puntosAS += jugador.getListaCartas().get(contadorAS).getPuntos();
-						contadorAS++;
-					}
-
-					if (puntosAS <= 10) {
-
-						jugador.getListaCartas().get(posicionCarta).setPuntos(11);
-
-					} else {
-
-						jugador.getListaCartas().get(posicionCarta).setPuntos(1);
-
-					}
-
-					break;
-
-				default:
-					break;
-				}
-
-			}
-
-			posicionCarta++;
-
-		}
-
-		posicionCarta = 0;
-
-		for (Carta carta : jugadorCPU.getListaCartas()) {
-
-			if (jugadorCPU.getListaCartas().get(posicionCartaCPU).getValores().matches(".*[2-9].*")) {
-
-				int puntos = Integer.parseInt(jugadorCPU.getListaCartas().get(posicionCartaCPU).getValores());
-
-				jugadorCPU.getListaCartas().get(posicionCartaCPU).setPuntos(puntos);
-
-			}
-
-			switch (jugadorCPU.getListaCartas().get(posicionCartaCPU).getValores()) {
+			switch (carta.getValores()) {
 
 			case "10":
 			case "J":
 			case "Q":
 			case "K":
 
-				jugadorCPU.getListaCartas().get(posicionCartaCPU).setPuntos(10);
+				carta.setPuntos(10);
 
 				break;
 
 			case "AS":
 
-				int puntosAsCPU = 0;
-				int contadorAsCPU = 0;
-
-				for (Carta carta2 : jugadorCPU.getListaCartas()) {
-
-					puntosAsCPU += jugadorCPU.getListaCartas().get(contadorAsCPU).getPuntos();
-					contadorAsCPU++;
-				}
-
-				// En el caso de que el jugador tenga mas de 10 puntos que el AS valga 1 porque
-				// sino perderia directamente
-				if (puntosAsCPU <= 10) {
-
-					jugadorCPU.getListaCartas().get(posicionCartaCPU).setPuntos(11);
-
-				} else {
-
-					jugadorCPU.getListaCartas().get(posicionCartaCPU).setPuntos(1);
-
-				}
-
+				carta.setPuntos(1);
+				ambosJugadores.setAs(true);
 				break;
 
 			default:
 				break;
 			}
-			posicionCartaCPU++;
+
 		}
-		posicionCartaCPU = 0;
+
 	}
 
-	// En caso de que el jugador gane se lleva el dinero y se lo resta al Dealer
-	public static void victoria(Jugador jugador, JugadorCPU jugadorCPU) {
+	/**
+	 * Le añade el dinero apostado al jugador y le quita el dinero al Dealer
+	 * 
+	 * @param jugador El jugador que ha ganado la partida.
+	 * @param dealer  El dealer que ha perdido la partida.
+	 */
+	public static void victoria(Jugador jugador, Jugador dealer) {
 
 		jugador.setDinero(jugador.getDinero() + jugador.getCantidadApostada());
-		jugadorCPU.setDinero(jugadorCPU.getDinero() - jugador.getCantidadApostada());
+		dealer.setDinero(dealer.getDinero() - jugador.getCantidadApostada());
 	}
 
-	// En caso de que el Dealer gane se lleva el dinero y se le resta el dinero al
-	// jugador
-	public static void derrota(Jugador jugador, JugadorCPU jugadorCPU) {
+	/**
+	 * Le añade el dinero apostado al Dealer y le quita el dinero al Jugador
+	 * 
+	 * 
+	 * @param jugador El jugador que ha perdido la partida.
+	 * @param dealer  El dealer que ha ganado la partida.
+	 */
+	public static void derrota(Jugador jugador, Jugador dealer) {
 
 		jugador.setDinero(jugador.getDinero() - jugador.getCantidadApostada());
-		jugadorCPU.setDinero(jugadorCPU.getDinero() + jugador.getCantidadApostada());
+		dealer.setDinero(dealer.getDinero() + jugador.getCantidadApostada());
 
 	}
 
-	// Permite al dealer coger cartas para que sea mas dinamico, se pasa de
-	// parametro al Dealer para ver cuantos puntos tiene
-	public static void dealerCogeCarta(JugadorCPU jugadorCPU) {
+	/**
+	 * Permite al dealer coger cartas si tiene menos de 17 puntos, añadiendo
+	 * dinamismo al juego.
+	 * 
+	 * @param dealer El dealer de la partida.
+	 */
+	public static void dealerCogeCarta(Jugador dealer) {
 
 		int contadorCPU = 0;
 		int puntosCPU = 0;
 
-		CartaAleatoria generador = new CartaAleatoria();
+		// Hace recuento de los puntos que tiene el Dealer
+		for (Carta carta : dealer.getListaCartas()) {
 
-		// Hace recuento de los puntos que tiene el Dealer - tipo si tiene J y un 6 pues
-		// tendria 16 puntos
-		for (Carta carta : jugadorCPU.getListaCartas()) {
-
-			puntosCPU += jugadorCPU.getListaCartas().get(contadorCPU).getPuntos();
+			puntosCPU += dealer.getListaCartas().get(contadorCPU).getPuntos();
 			contadorCPU++;
 		}
 
 		// En caso que el Dealer tengo menos de 17 puntos coge una carta
 		if (puntosCPU <= 17) {
 			System.out.println("\u001B[31m" + "Ves como el dealer coge una carta" + "\u001B[0m");
-			jugadorCPU.añadirCarta(new Carta(generador.obtenerValorAleatoria(), generador.obtenerSimboloAleatoria()));
+			addCartaJugador(dealer);
+
 		}
+
+	}
+
+	/**
+	 * Calcula y actualiza la puntuacion total del jugador elegido.
+	 * 
+	 * @param ambosJugadores El jugador cuya puntuacion necesita ser calculada.
+	 */
+	public static void calcularPuntos(Jugador ambosJugadores) {
+
+		int puntos = 0;
+		int contador = 0;
+
+		// Calcula cuantos puntos tiene el jugador en base al valor de cada carta
+		for (Carta carta : ambosJugadores.getListaCartas()) {
+
+			puntos += ambosJugadores.getListaCartas().get(contador).getPuntos();
+			contador++;
+		}
+
+		ambosJugadores.setPuntos(puntos);
+
+	}
+
+	/**
+	 * @deprecated En un futuro se creara una nueva clase que maneje mejor la puntuacion de los ases.
+	 *             Use la nueva clase cuando esté disponible.
+	 * 
+	 * Ajusta el valor del AS en la mano del jugador, dependiendo de su
+	 * puntuacion actual.
+	 * 
+	 * @param ambosJugadores El jugador que tenga los ases
+	 * @deprecated Este método será eliminado en futuras versiones. Utilice la nueva clase de gestión de puntuación de ases.
+	 */
+	@Deprecated
+	public static void cambiarValorAs(Jugador ambosJugadores) {
+
+		calcularPuntos(ambosJugadores);
+
+		int posicionCartaAS = 0;
+
+		if (ambosJugadores.getPuntos() <= 11) {
+
+			for (Carta carta3 : ambosJugadores.getListaCartas()) {
+
+				if (ambosJugadores.getListaCartas().get(posicionCartaAS).getValores() == "AS") {
+
+					ambosJugadores.getListaCartas().get(posicionCartaAS).setPuntos(11);
+					calcularPuntos(ambosJugadores);
+					return;
+				}
+
+				posicionCartaAS++;
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Genera y añade una carta aleatoria a la mano del jugador / Dealer.
+	 * 
+	 * @param ambosJugadores El jugador a quien se le añadira una carta aleatoria.
+	 */
+	public static void addCartaJugador(Jugador ambosJugadores) {
+
+		CartaAleatoria generador = new CartaAleatoria();
+
+		Carta carta = new Carta(generador.obtenerValorAleatoria(), generador.obtenerSimboloAleatoria());
+		ambosJugadores.addCarta(carta);
+		Partida.puntuacion(carta, ambosJugadores);
 
 	}
 
